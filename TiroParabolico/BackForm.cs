@@ -73,5 +73,10 @@ namespace TiroParabolico
             var processForm = Application.OpenForms["ProcessForm"];
             processForm?.BringToFront();
         }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

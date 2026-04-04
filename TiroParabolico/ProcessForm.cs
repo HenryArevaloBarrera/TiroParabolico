@@ -12,7 +12,7 @@ namespace TiroParabolico
 {
     public partial class ProcessForm : Form
     {
-
+        GraficasForm graficasForm;
         BackForm backForm;
 
         int startMouseX, startMouseY;
@@ -36,6 +36,18 @@ namespace TiroParabolico
 
         // Guardar la posición X original del objetivo
         int objetivoOriginalX;
+
+        List<double> tiempo = new List<double>();
+        List<double> posX = new List<double>();
+        List<double> posY = new List<double>();
+        List<double> velX = new List<double>();
+        List<double> velY = new List<double>();
+        List<double> velMag = new List<double>();
+        List<double> angulo = new List<double>();
+
+        List<string> tipoRebote = new List<string>();
+        List<double> rebX = new List<double>();
+        List<double> rebY = new List<double>();
 
         private void picTejoF_Clic(object sender, MouseEventArgs e)
         {
@@ -62,6 +74,16 @@ namespace TiroParabolico
 
         private void picTejoF_MouseUp(object sender, MouseEventArgs e)
         {
+            tiempo.Clear();
+            posX.Clear();
+            posY.Clear();
+            velX.Clear();
+            velY.Clear();
+            velMag.Clear();
+            angulo.Clear();
+            tipoRebote.Clear();
+            rebX.Clear();
+            rebY.Clear();
             if (e.Button == MouseButtons.Left)
             {
                 // Reiniciar variables para nuevo lanzamiento
@@ -79,6 +101,13 @@ namespace TiroParabolico
 
         private void timer1_Tick(object sender, EventArgs e)
         {
+            double vx = v0x;
+            double vy = v0y - gravity * t;
+            double v = Math.Sqrt(vx * vx + vy * vy);
+            double ang = Math.Atan2(vy, vx) * 180 / Math.PI;
+
+           
+
             double xt = v0x * t + x0;
             double yt = -0.5 * gravity * Math.Pow(t, 2) + v0y * t + y0;
 
@@ -88,6 +117,13 @@ namespace TiroParabolico
                 initialTejoY - (int)yt
             );
 
+            tiempo.Add(t);
+            posX.Add(xt);
+            posY.Add(yt);
+            velX.Add(vx);
+            velY.Add(vy);
+            velMag.Add(v);
+            angulo.Add(ang);
             // Verificar colisiones en orden de prioridad
             bool colisionDetectada = false;
 
@@ -190,10 +226,18 @@ namespace TiroParabolico
 
             // Avanzar tiempo
             t += 0.05; // Reducido para mejor precisión
+
+            if (graficasForm != null && !graficasForm.IsDisposed)
+            {
+                graficasForm.ActualizarDatos(t, xt, yt, vx, vy, v);
+            }
         }
 
         private void RegistrarDatosRebote(string tipo, double x, double y)
         {
+            tipoRebote.Add(tipo);
+            rebX.Add(x);
+            rebY.Add(y);
             // Mostrar en consola o en un label si lo tienes
             Console.WriteLine($"=== REBOTE EN {tipo} #{rebotesRealizados + 1} ===");
             Console.WriteLine($"Tiempo: {t:F2} s");
@@ -313,6 +357,19 @@ namespace TiroParabolico
 
                 deltaX = initialTejoX - picTejoF.Location.X;
                 deltaY = picTejoF.Location.Y - initialTejoY;
+            }
+        }
+
+        private void btnGraficas_Click_Click(object sender, EventArgs e)
+        {
+            if (graficasForm == null || graficasForm.IsDisposed)
+            {
+                graficasForm = new GraficasForm();
+                graficasForm.Show();
+            }
+            else
+            {
+                graficasForm.BringToFront();
             }
         }
 
