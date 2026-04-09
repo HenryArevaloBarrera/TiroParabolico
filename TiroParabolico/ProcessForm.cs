@@ -84,6 +84,11 @@ namespace TiroParabolico
             tipoRebote.Clear();
             rebX.Clear();
             rebY.Clear();
+            if (graficasForm != null && !graficasForm.IsDisposed)
+            {
+                graficasForm.Limpiar();
+            }
+
             if (e.Button == MouseButtons.Left)
             {
                 // Reiniciar variables para nuevo lanzamiento
@@ -246,6 +251,11 @@ namespace TiroParabolico
             Console.WriteLine($"Magnitud: {Math.Sqrt(v0x * v0x + v0y * v0y):F2} m/s");
             Console.WriteLine($"Ángulo: {Math.Atan2(v0y, v0x) * 180 / Math.PI:F2}°");
             Console.WriteLine("");
+
+            if (graficasForm != null && !graficasForm.IsDisposed)
+            {
+                graficasForm.AgregarRebote(tipo, x, y);
+            }
         }
 
         private void CambiarPosicionObjetivo()

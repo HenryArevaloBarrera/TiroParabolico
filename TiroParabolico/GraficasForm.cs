@@ -159,11 +159,42 @@ namespace TiroParabolico
                 foreach (var s in chart.Series)
                     s.Points.Clear();
             }
+
+            if (listRebotes != null)
+            {
+                listRebotes.Items.Clear();
+            }
         }
 
         private void GraficasForm_MouseUp(object sender, MouseEventArgs e)
         {
        
+        }
+
+        private void chartTrayectoria_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        public void AgregarRebote(string tipo, double x, double y)
+        {
+            // 1. Añadir el registro a la lista (el recuadro blanco)
+            int numRebote = listRebotes.Items.Count + 1;
+            listRebotes.Items.Add($"Rebote {numRebote} ({tipo}) → X:{x:F2} Y:{y:F2}");
+
+            // 2. Añadir el punto al gráfico de trayectoria
+            // Si la serie de "Rebotes" no existe, la creamos en tiempo real
+            if (chartTrayectoria.Series.IndexOf("Rebotes") == -1)
+            {
+                var rebotes = chartTrayectoria.Series.Add("Rebotes");
+                rebotes.ChartType = SeriesChartType.Point;
+                rebotes.MarkerSize = 10;
+                rebotes.MarkerStyle = MarkerStyle.Circle;
+                rebotes.Color = Color.Red; // Puedes cambiar el color si prefieres
+            }
+
+            // Dibujamos la coordenada del salto
+            chartTrayectoria.Series["Rebotes"].Points.AddXY(x, y);
         }
     }
 
